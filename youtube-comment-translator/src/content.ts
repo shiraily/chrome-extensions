@@ -12,28 +12,33 @@ interface CommentData {
  * This is a placeholder for actual DOM parsing logic
  */
 function extractCommentsFromDOM(): CommentData[] {
-  console.log('[Placeholder] Extracting comments from YouTube DOM');
-  
-  // TODO: Implement actual DOM parsing logic
-  // This should find comment elements and extract:
-  // - Comment text from the appropriate element
-  // - Like count from the like button/counter element
-  
-  // Example structure for YouTube comments:
-  // - Comments container: #comments
-  // - Individual comment: ytd-comment-thread-renderer
-  // - Comment text: #content-text
-  // - Like count: #vote-count-middle or similar
-  
-  const dummyComments: CommentData[] = [
-    { text: '이것은 한국어 댓글입니다', likeCount: 100, element: document.createElement('div') },
-    { text: 'This is an English comment', likeCount: 50, element: document.createElement('div') },
-    { text: '또 다른 한국어 댓글', likeCount: 200, element: document.createElement('div') },
-    { text: 'Another English comment', likeCount: 30, element: document.createElement('div') },
-    { text: '세 번째 한국어 댓글', likeCount: 150, element: document.createElement('div') },
-  ];
-  
-  return dummyComments;
+  // 実際のYouTubeコメントDOMから取得
+  const threads = document.querySelectorAll('ytd-comment-thread-renderer');
+  const comments: CommentData[] = [];
+  threads.forEach(thread => {
+    const textElement = thread.querySelector('#content-text .yt-core-attributed-string');
+    const text = textElement && textElement.textContent 
+      ? textElement.textContent.trim() 
+      : '';
+
+    const likeElement = thread.querySelector('#vote-count-middle');
+    // カンマ区切りや空白を除去し数値化
+    let likeCount = 0;
+    if (likeElement && likeElement.textContent) {
+      const raw = likeElement.textContent.trim().replace(/,/g, '');
+      likeCount = parseInt(raw, 10);
+      if (isNaN(likeCount)) likeCount = 0;
+    }
+
+    if (text) {
+      comments.push({
+        text,
+        likeCount,
+        element: textElement as Element
+      });
+    }
+  });
+  return comments;
 }
 
 /**
@@ -75,28 +80,25 @@ function getTop15PercentByLikes(comments: CommentData[]): CommentData[] {
  * Dummy function to translate text using DeepL API
  * This is a placeholder for actual API integration
  */
-async function translateWithDeepL(text: string, apiKey: string): Promise<string> {
-  console.log('[Placeholder] Translating text with DeepL API');
-  console.log('Text:', text);
-  console.log('API Key:', apiKey ? '***configured***' : 'not configured');
-  
-  // TODO: Implement actual DeepL API call
-  // Example:
-  // const response = await fetch('https://api-free.deepl.com/v2/translate', {
-  //   method: 'POST',
-  //   headers: {
-  //     'Authorization': `DeepL-Auth-Key ${apiKey}`,
-  //     'Content-Type': 'application/x-www-form-urlencoded',
-  //   },
-  //   body: new URLSearchParams({
-  //     text: text,
-  //     target_lang: 'JA', // or 'EN' depending on requirements
-  //   }),
-  // });
-  // const data = await response.json();
-  // return data.translations[0].text;
-  
-  return `[Translated] ${text}`;
+async function translateWithDeepL(text: string): Promise<string> {
+  // background経由でDeepL翻訳（APIキーはbackgroundで取得）
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage(
+      {
+        action: 'deeplTranslate',
+        text
+      },
+      (response) => {
+        if (chrome.runtime.lastError) {
+          reject(new Error(chrome.runtime.lastError.message));
+        } else if (response && response.success) {
+          resolve(response.translated);
+        } else {
+          reject(new Error(response && response.error ? response.error : 'Unknown error'));
+        }
+      }
+    );
+  });
 }
 
 /**
@@ -131,7 +133,7 @@ async function extractAndTranslateComments(): Promise<void> {
   const translations: Array<{ original: string; translated: string; likes: number }> = [];
   
   for (const comment of topComments) {
-    const translated = await translateWithDeepL(comment.text, apiKey);
+    const translated = await translateWithDeepL(comment.text);
     translations.push({
       original: comment.text,
       translated: translated,
@@ -142,15 +144,25 @@ async function extractAndTranslateComments(): Promise<void> {
   // Step 5: Display results
   console.log('Translation results:', translations);
   
-  // TODO: Display translations in a nice UI (e.g., modal or sidebar)
-  const resultsText = translations
-    .map(
-      (t, i) =>
-        `${i + 1}. [${t.likes} likes]\nOriginal: ${t.original}\nTranslated: ${t.translated}`
-    )
-    .join('\n\n');
-  
-  alert(`Translated Top Korean Comments:\n\n${resultsText}`);
+  // Display translations near original comments in the DOM
+  translations.forEach((t) => {
+    // Find the comment element by matching text
+    const comment = koreanComments.find((c) => c.text === t.original);
+    if (comment && comment.element) {
+      // Create a translation display element
+      const translationDiv = document.createElement('div');
+      translationDiv.textContent = `🇯🇵 ${t.translated}`;
+      translationDiv.style.background = '#f6f8fa';
+      translationDiv.style.borderLeft = '3px solid #0078d7';
+      translationDiv.style.margin = '4px 0 8px 0';
+      translationDiv.style.padding = '4px 8px';
+      translationDiv.style.fontSize = '0.95em';
+      translationDiv.style.color = '#222';
+      translationDiv.style.borderRadius = '4px';
+      // Insert after the comment element
+      comment.element.parentNode?.insertBefore(translationDiv, comment.element.nextSibling);
+    }
+  });
 }
 
 // Listen for messages from background script
