@@ -65,7 +65,7 @@ Get your DeepL API key from: https://www.deepl.com/pro-api
 ## Project Structure
 
 ```
-youtube-comment-translator/
+kpop-youtube-viewer/
 ├── src/
 │   ├── background.ts    # Background service worker
 │   ├── content.ts       # Content script for YouTube pages

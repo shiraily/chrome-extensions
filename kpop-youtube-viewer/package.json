@@ -1,5 +1,5 @@
 {
-  "name": "k-pop-viewer",
+  "name": "kpop-youtube-viewer",
   "version": "1.0.0",
   "description": "Chrome extension to view and translate K-pop related Korean comments from YouTube",
   "type": "module",

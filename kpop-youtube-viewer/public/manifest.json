@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "K-pop Viewer",
+  "name": "kpop-youtube-viewer",
   "version": "1.0.0",
   "description": "View and translate K-pop related Korean comments from YouTube using DeepL API",
   "permissions": [
