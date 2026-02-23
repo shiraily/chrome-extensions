@@ -58,22 +58,19 @@ function filterKoreanComments(comments: CommentData[]): CommentData[] {
 }
 
 /**
- * Calculates the top 15% of comments by like count
+/**
+ * Calculates the top X% of comments by like count
  * @param comments Array of comments with like counts
- * @returns Top 15% of comments sorted by like count (descending)
+ * @param percent Percentage (1-100)
+ * @returns Top X% of comments sorted by like count (descending)
  */
-function getTop15PercentByLikes(comments: CommentData[]): CommentData[] {
+function getTopPercentByLikes(comments: CommentData[], percent: number): CommentData[] {
   if (comments.length === 0) {
     return [];
   }
-  
-  // Sort by like count in descending order
   const sortedComments = [...comments].sort((a, b) => b.likeCount - a.likeCount);
-  
-  // Calculate top 15%
-  const top15PercentCount = Math.ceil(sortedComments.length * 0.15);
-  
-  return sortedComments.slice(0, top15PercentCount);
+  const topCount = Math.ceil(sortedComments.length * (percent / 100));
+  return sortedComments.slice(0, topCount);
 }
 
 /**
@@ -125,9 +122,16 @@ async function extractAndTranslateComments(): Promise<void> {
   const koreanComments = filterKoreanComments(allComments);
   console.log(`Found ${koreanComments.length} Korean comments`);
   
-  // Step 3: Get top 15% by like count
-  const topComments = getTop15PercentByLikes(koreanComments);
-  console.log(`Selected top ${topComments.length} comments (15% of Korean comments)`);
+  // Step 3: Get top % by like count (from storage, default 20)
+  let percent = 20;
+  try {
+    const result = await chrome.storage.local.get(['topPercent']);
+    if (result.topPercent !== undefined && !isNaN(result.topPercent)) {
+      percent = Number(result.topPercent);
+    }
+  } catch (e) {}
+  const topComments = getTopPercentByLikes(koreanComments, percent);
+  console.log(`Selected top ${topComments.length} comments (${percent}% of Korean comments)`);
   
   // Step 4: Translate selected comments
   const translations: Array<{ original: string; translated: string; likes: number }> = [];

@@ -1,4 +1,5 @@
-# K-pop Viewer
+
+# kpop-youtube-viewer
 
 Chrome extension to view and translate K-pop related Korean comments from YouTube using DeepL API.
 
@@ -6,9 +7,15 @@ Chrome extension to view and translate K-pop related Korean comments from YouTub
 
 - Extracts comments from YouTube videos
 - Filters comments containing Korean text
-- Selects top 15% of Korean comments by like count
-- Translates selected comments using DeepL API
-- Configurable API key through options page
+- Selects the top 20% of Korean comments by like count
+- Automatically translates selected comments to Japanese using DeepL API
+- Displays the translation directly below each comment with a 🇯🇵 mark
+- Configurable DeepL API key through the options page
+
+## Usage
+1. Set your DeepL API key on the extension's options page
+2. Open a YouTube video page and click the extension icon
+3. The top 20% most-liked Korean comments will be translated and shown in Japanese below each comment
 
 ## Development
 
