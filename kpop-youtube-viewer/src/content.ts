@@ -119,8 +119,16 @@ async function extractAndTranslateComments(): Promise<void> {
   console.log(`Extracted ${allComments.length} total comments`);
   
   // Step 2: Filter Korean comments
-  const koreanComments = filterKoreanComments(allComments);
-  console.log(`Found ${koreanComments.length} Korean comments`);
+  let koreanComments = filterKoreanComments(allComments);
+  // すでに翻訳済み（直後に翻訳クラスdivがある）コメントを除外
+  koreanComments = koreanComments.filter((comment) => {
+    const next = comment.element.nextElementSibling;
+    return !(
+      next &&
+      next.classList && next.classList.contains('kpop-yt-translated')
+    );
+  });
+  console.log(`Found ${koreanComments.length} Korean comments (excluding already translated)`);
   
   // Step 3: Get top % by like count (from storage, default 20)
   let percent = 20;
@@ -156,6 +164,7 @@ async function extractAndTranslateComments(): Promise<void> {
       // Create a translation display element
       const translationDiv = document.createElement('div');
       translationDiv.textContent = `🇯🇵 ${t.translated}`;
+      translationDiv.classList.add('kpop-yt-translated');
       translationDiv.style.background = '#f6f8fa';
       translationDiv.style.borderLeft = '3px solid #0078d7';
       translationDiv.style.margin = '4px 0 8px 0';
