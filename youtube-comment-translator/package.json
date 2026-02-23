@@ -1,7 +1,7 @@
 {
-  "name": "youtube-comment-translator",
+  "name": "k-pop-viewer",
   "version": "1.0.0",
-  "description": "Chrome extension to extract and translate Korean comments from YouTube",
+  "description": "Chrome extension to view and translate K-pop related Korean comments from YouTube",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -1,6 +1,6 @@
-# YouTube Comment Translator
+# K-pop Viewer
 
-Chrome extension to extract and translate Korean comments from YouTube using DeepL API.
+Chrome extension to view and translate K-pop related Korean comments from YouTube using DeepL API.
 
 ## Features
 

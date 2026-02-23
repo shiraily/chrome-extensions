@@ -1,7 +1,7 @@
-# YouTube Comment Translator Extension - Implementation Summary
+# K-pop Viewer Extension - Implementation Summary
 
 ## Overview
-This Chrome extension (Manifest V3) extracts Korean comments from YouTube videos and translates them using the DeepL API. It's built with TypeScript and Vite.
+This Chrome extension (Manifest V3) views and translates K-pop related Korean comments from YouTube videos using the DeepL API. It's built with TypeScript and Vite.
 
 ## Directory Structure
 ```
