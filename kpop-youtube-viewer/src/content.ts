@@ -189,6 +189,8 @@ async function extractAndTranslateComments(): Promise<void> {
       translationDiv.style.borderRadius = '4px';
       translationDiv.style.display = 'block';
       translationDiv.style.maxWidth = '90%';
+      translationDiv.style.width = 'fit-content';
+      translationDiv.style.margin = '4px 0 8px 0';
       // Insert after the comment element
       t.element.parentNode?.insertBefore(translationDiv, t.element.nextSibling);
     }
