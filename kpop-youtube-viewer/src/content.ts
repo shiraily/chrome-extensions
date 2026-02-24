@@ -159,14 +159,15 @@ async function extractAndTranslateComments(): Promise<void> {
   console.log(`Selected top ${topComments.length} comments (top ${percent}% or >=${likeThreshold} likes)`);
   
   // Step 4: Translate selected comments
-  const translations: Array<{ original: string; translated: string; likes: number }> = [];
-  
+  const translations: Array<{ original: string; translated: string; likes: number; element: Element }> = [];
+
   for (const comment of topComments) {
     const translated = await translateWithDeepL(comment.text);
     translations.push({
       original: comment.text,
       translated: translated,
       likes: comment.likeCount,
+      element: comment.element,
     });
   }
   
@@ -175,9 +176,7 @@ async function extractAndTranslateComments(): Promise<void> {
   
   // Display translations near original comments in the DOM
   translations.forEach((t) => {
-    // Find the comment element by matching text
-    const comment = koreanComments.find((c) => c.text === t.original);
-    if (comment && comment.element) {
+    if (t.element) {
       // Create a translation display element
       const translationDiv = document.createElement('div');
       translationDiv.textContent = `🇯🇵 ${t.translated}`;
@@ -188,10 +187,10 @@ async function extractAndTranslateComments(): Promise<void> {
       translationDiv.style.fontSize = '0.95em';
       translationDiv.style.color = '#222';
       translationDiv.style.borderRadius = '4px';
-      translationDiv.style.display = 'inline-block';
+      translationDiv.style.display = 'block';
       translationDiv.style.maxWidth = '90%';
       // Insert after the comment element
-      comment.element.parentNode?.insertBefore(translationDiv, comment.element.nextSibling);
+      t.element.parentNode?.insertBefore(translationDiv, t.element.nextSibling);
     }
   });
 }
