@@ -8,8 +8,7 @@ interface CommentData {
 }
 
 /**
- * Dummy function to extract comment text and like count from YouTube DOM
- * This is a placeholder for actual DOM parsing logic
+ * YouTubeコメントDOMからテキストとlike数を抽出
  */
 function extractCommentsFromDOM(): CommentData[] {
   // 実際のYouTubeコメントDOMから取得
@@ -22,16 +21,13 @@ function extractCommentsFromDOM(): CommentData[] {
       : '';
 
     const likeElement = thread.querySelector('#vote-count-middle');
-    // カンマ区切りや空白を除去し数値化
     let likeCount = 0;
     if (likeElement && likeElement.textContent) {
       let raw = likeElement.textContent.trim().replace(/,/g, '');
-      // 日本語の万表記対応
       if (/万/.test(raw)) {
         const num = parseFloat(raw.replace('万', ''));
         likeCount = Math.round(num * 10000);
       } else {
-        // 通常の数値化
         likeCount = parseInt(raw, 10);
         if (isNaN(likeCount)) likeCount = 0;
       }
@@ -121,13 +117,9 @@ async function extractAndTranslateComments(): Promise<void> {
     return;
   }
   
-  // Step 1: Extract comments from DOM
   const allComments = extractCommentsFromDOM();
   console.log(`Extracted ${allComments.length} total comments`);
-  
-  // Step 2: Filter Korean comments
   let koreanComments = filterKoreanComments(allComments);
-  // すでに翻訳済み（直後に翻訳クラスdivがある）コメントを除外
   koreanComments = koreanComments.filter((comment) => {
     const next = comment.element.nextElementSibling;
     return !(
@@ -136,8 +128,6 @@ async function extractAndTranslateComments(): Promise<void> {
     );
   });
   console.log(`Found ${koreanComments.length} Korean comments (excluding already translated)`);
-  
-  // Step 3: Get top % by like count (from storage, default 20)
   let percent = 20;
   let likeThreshold = 1000;
   try {
@@ -149,7 +139,6 @@ async function extractAndTranslateComments(): Promise<void> {
       likeThreshold = Number(result.likeThreshold);
     }
   } catch (e) {}
-  // top%対象＋しきい値以上のコメントを重複なくまとめる
   const topCommentsSet = new Set(
     getTopPercentByLikes(koreanComments, percent).map(c => c.text)
   );
@@ -157,8 +146,6 @@ async function extractAndTranslateComments(): Promise<void> {
   thresholdComments.forEach(c => topCommentsSet.add(c.text));
   const topComments = koreanComments.filter(c => topCommentsSet.has(c.text));
   console.log(`Selected top ${topComments.length} comments (top ${percent}% or >=${likeThreshold} likes)`);
-  
-  // Step 4: Translate selected comments
   const translations: Array<{ original: string; translated: string; likes: number; element: Element }> = [];
 
   for (const comment of topComments) {
@@ -170,14 +157,9 @@ async function extractAndTranslateComments(): Promise<void> {
       element: comment.element,
     });
   }
-  
-  // Step 5: Display results
   console.log('Translation results:', translations);
-  
-  // Display translations near original comments in the DOM
   translations.forEach((t) => {
     if (t.element) {
-      // Create a translation display element
       const translationDiv = document.createElement('div');
       translationDiv.textContent = `🇯🇵 ${t.translated}`;
       translationDiv.classList.add('kpop-yt-translated');
@@ -191,7 +173,6 @@ async function extractAndTranslateComments(): Promise<void> {
       translationDiv.style.maxWidth = '90%';
       translationDiv.style.width = 'fit-content';
       translationDiv.style.margin = '4px 0 8px 0';
-      // Insert after the comment element
       t.element.parentNode?.insertBefore(translationDiv, t.element.nextSibling);
     }
   });
