@@ -25,9 +25,16 @@ function extractCommentsFromDOM(): CommentData[] {
     // カンマ区切りや空白を除去し数値化
     let likeCount = 0;
     if (likeElement && likeElement.textContent) {
-      const raw = likeElement.textContent.trim().replace(/,/g, '');
-      likeCount = parseInt(raw, 10);
-      if (isNaN(likeCount)) likeCount = 0;
+      let raw = likeElement.textContent.trim().replace(/,/g, '');
+      // 日本語の万表記対応
+      if (/万/.test(raw)) {
+        const num = parseFloat(raw.replace('万', ''));
+        likeCount = Math.round(num * 10000);
+      } else {
+        // 通常の数値化
+        likeCount = parseInt(raw, 10);
+        if (isNaN(likeCount)) likeCount = 0;
+      }
     }
 
     if (text) {
@@ -132,14 +139,24 @@ async function extractAndTranslateComments(): Promise<void> {
   
   // Step 3: Get top % by like count (from storage, default 20)
   let percent = 20;
+  let likeThreshold = 1000;
   try {
-    const result = await chrome.storage.local.get(['topPercent']);
+    const result = await chrome.storage.local.get(['topPercent', 'likeThreshold']);
     if (result.topPercent !== undefined && !isNaN(result.topPercent)) {
       percent = Number(result.topPercent);
     }
+    if (result.likeThreshold !== undefined && !isNaN(result.likeThreshold)) {
+      likeThreshold = Number(result.likeThreshold);
+    }
   } catch (e) {}
-  const topComments = getTopPercentByLikes(koreanComments, percent);
-  console.log(`Selected top ${topComments.length} comments (${percent}% of Korean comments)`);
+  // top%対象＋しきい値以上のコメントを重複なくまとめる
+  const topCommentsSet = new Set(
+    getTopPercentByLikes(koreanComments, percent).map(c => c.text)
+  );
+  const thresholdComments = koreanComments.filter(c => c.likeCount >= likeThreshold);
+  thresholdComments.forEach(c => topCommentsSet.add(c.text));
+  const topComments = koreanComments.filter(c => topCommentsSet.has(c.text));
+  console.log(`Selected top ${topComments.length} comments (top ${percent}% or >=${likeThreshold} likes)`);
   
   // Step 4: Translate selected comments
   const translations: Array<{ original: string; translated: string; likes: number }> = [];

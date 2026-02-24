@@ -5,6 +5,7 @@ const form = document.getElementById('options-form') as HTMLFormElement;
 const apiKeyInput = document.getElementById('api-key') as HTMLInputElement;
 const clearButton = document.getElementById('clear-button') as HTMLButtonElement;
 const topPercentInput = document.getElementById('top-percent') as HTMLInputElement;
+const likeThresholdInput = document.getElementById('like-threshold') as HTMLInputElement;
 const statusDiv = document.getElementById('status') as HTMLDivElement;
 
 /**
@@ -26,7 +27,12 @@ function showStatus(message: string, isSuccess: boolean): void {
  */
 async function loadSavedOptions(): Promise<void> {
   try {
-    const result = await chrome.storage.local.get(['deeplApiKey', 'topPercent']);
+    const result = await chrome.storage.local.get(['deeplApiKey', 'topPercent', 'likeThreshold']);
+        if (result.likeThreshold !== undefined) {
+          likeThresholdInput.value = String(result.likeThreshold);
+        } else {
+          likeThresholdInput.value = '1000';
+        }
     if (result.deeplApiKey) {
       apiKeyInput.value = result.deeplApiKey;
     }
@@ -45,7 +51,8 @@ async function loadSavedOptions(): Promise<void> {
  */
 async function saveOptions(apiKey: string, topPercent: number): Promise<void> {
   try {
-    await chrome.storage.local.set({ deeplApiKey: apiKey, topPercent });
+    const likeThreshold = parseInt(likeThresholdInput.value, 10);
+    await chrome.storage.local.set({ deeplApiKey: apiKey, topPercent, likeThreshold });
     showStatus('Settings saved successfully!', true);
   } catch (error) {
     console.error('Error saving options:', error);
@@ -86,10 +93,11 @@ form.addEventListener('submit', (e) => {
 
 
 clearButton.addEventListener('click', () => {
-  if (confirm('Are you sure you want to clear the API key and percentage?')) {
+  if (confirm('Are you sure you want to clear the API key, percentage, and threshold?')) {
     clearApiKey();
     topPercentInput.value = '20';
-    chrome.storage.local.remove(['topPercent']);
+    likeThresholdInput.value = '1000';
+    chrome.storage.local.remove(['topPercent', 'likeThreshold']);
   }
 });
 
