@@ -182,13 +182,14 @@ async function extractAndTranslateComments(): Promise<void> {
       const translationDiv = document.createElement('div');
       translationDiv.textContent = `🇯🇵 ${t.translated}`;
       translationDiv.classList.add('kpop-yt-translated');
-      translationDiv.style.background = '#f6f8fa';
-      translationDiv.style.borderLeft = '3px solid #0078d7';
+      translationDiv.style.background = '#e3e5e8';
       translationDiv.style.margin = '4px 0 8px 0';
-      translationDiv.style.padding = '4px 8px';
+      translationDiv.style.padding = '4px 12px';
       translationDiv.style.fontSize = '0.95em';
       translationDiv.style.color = '#222';
       translationDiv.style.borderRadius = '4px';
+      translationDiv.style.display = 'inline-block';
+      translationDiv.style.maxWidth = '90%';
       // Insert after the comment element
       comment.element.parentNode?.insertBefore(translationDiv, comment.element.nextSibling);
     }
