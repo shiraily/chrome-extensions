@@ -1,5 +1,5 @@
 // ...existing code...
-// auto-form-input options page
+// auto-reserva-input options page
 
 import { FormInput } from './types';
 

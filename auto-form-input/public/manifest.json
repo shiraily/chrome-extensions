@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "auto-form-input",
+  "name": "auto-reserva-input",
   "version": "1.0.0",
   "description": "オプションで登録したid-valueペアをフォームに自動入力するChrome拡張",
   "permissions": [
@@ -16,7 +16,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": ["*://*.reserva.be/*"],
       "js": ["content.js"]
     }
   ],
