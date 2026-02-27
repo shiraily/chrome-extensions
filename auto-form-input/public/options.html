@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>auto-form-input オプション</title>
+  <style>
+    body { font-family: sans-serif; margin: 2em; }
+    .input-row { display: flex; gap: 0.5em; margin-bottom: 0.5em; align-items: center; }
+    .input-row input[type="text"] { width: 10em; max-width: 100px; padding: 2px 4px; font-size: 0.95em; }
+    .input-row select { width: 6em; max-width: 80px; padding: 2px 4px; font-size: 0.95em; }
+    .input-row .remove-btn { padding: 2px 8px; font-size: 1em; }
+    .add-btn { margin-top: 1em; }
+    .save-btn { margin-top: 2em; }
+  </style>
+</head>
+<body>
+  <h2>自動入力対象のフォーム設定</h2>
+  <div id="input-list"></div>
+  <button class="add-btn">＋追加</button>
+  <button class="save-btn">保存</button>
+  <div id="status"></div>
+  <script src="options.js" type="module"></script>
+</body>
+</html>

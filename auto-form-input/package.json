@@ -1,0 +1,20 @@
+{
+  "name": "auto-form-input",
+  "version": "1.0.0",
+  "description": "Chrome extension to input form automatically",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "Takaaki Shirai",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/chrome": "^0.0.256",
+    "@types/node": "^20.10.6",
+    "typescript": "^5.9.3",
+    "vite": "^5.0.10"
+  }
+}
