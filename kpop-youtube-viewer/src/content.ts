@@ -15,9 +15,14 @@ function extractCommentsFromDOM(): CommentData[] {
   const threads = document.querySelectorAll('ytd-comment-thread-renderer');
   const comments: CommentData[] = [];
   threads.forEach(thread => {
-    const textElement = thread.querySelector('#content-text .yt-core-attributed-string');
-    const text = textElement && textElement.textContent 
-      ? textElement.textContent.trim() 
+    const textContainer = thread.querySelector('#content-text');
+    // YouTube側のDOM差分に対応（旧: .yt-core-attributed-string / 新: .ytAttributedStringHost）
+    const textElement =
+      textContainer?.querySelector('.ytAttributedStringHost') ||
+      textContainer?.querySelector('.yt-core-attributed-string') ||
+      textContainer;
+    const text = textElement && textElement.textContent
+      ? textElement.textContent.trim()
       : '';
 
     const likeElement = thread.querySelector('#vote-count-middle');
@@ -37,7 +42,7 @@ function extractCommentsFromDOM(): CommentData[] {
       comments.push({
         text,
         likeCount,
-        element: textElement as Element
+        element: textContainer as Element
       });
     }
   });
