@@ -1,12 +1,18 @@
 // Options page script for DeepL API key management
 // Saves and retrieves API key from chrome.storage.local
 
+const DEFAULT_TOP_PERCENT = 100;
+const DEFAULT_LIKE_THRESHOLD = 1000;
+
 const form = document.getElementById('options-form') as HTMLFormElement;
 const apiKeyInput = document.getElementById('api-key') as HTMLInputElement;
 const clearButton = document.getElementById('clear-button') as HTMLButtonElement;
 const topPercentInput = document.getElementById('top-percent') as HTMLInputElement;
 const likeThresholdInput = document.getElementById('like-threshold') as HTMLInputElement;
 const statusDiv = document.getElementById('status') as HTMLDivElement;
+
+topPercentInput.placeholder = String(DEFAULT_TOP_PERCENT);
+likeThresholdInput.placeholder = String(DEFAULT_LIKE_THRESHOLD);
 
 /**
  * Display status message
@@ -28,18 +34,18 @@ function showStatus(message: string, isSuccess: boolean): void {
 async function loadSavedOptions(): Promise<void> {
   try {
     const result = await chrome.storage.local.get(['deeplApiKey', 'topPercent', 'likeThreshold']);
-        if (result.likeThreshold !== undefined) {
-          likeThresholdInput.value = String(result.likeThreshold);
-        } else {
-          likeThresholdInput.value = '1000';
-        }
+    if (result.likeThreshold !== undefined) {
+      likeThresholdInput.value = String(result.likeThreshold);
+    } else {
+      likeThresholdInput.value = String(DEFAULT_LIKE_THRESHOLD);
+    }
     if (result.deeplApiKey) {
       apiKeyInput.value = result.deeplApiKey;
     }
     if (result.topPercent !== undefined) {
       topPercentInput.value = String(result.topPercent);
     } else {
-      topPercentInput.value = '20';
+      topPercentInput.value = String(DEFAULT_TOP_PERCENT);
     }
   } catch (error) {
     console.error('Error loading options:', error);
@@ -95,8 +101,8 @@ form.addEventListener('submit', (e) => {
 clearButton.addEventListener('click', () => {
   if (confirm('Are you sure you want to clear the API key, percentage, and threshold?')) {
     clearApiKey();
-    topPercentInput.value = '20';
-    likeThresholdInput.value = '1000';
+    topPercentInput.value = String(DEFAULT_TOP_PERCENT);
+    likeThresholdInput.value = String(DEFAULT_LIKE_THRESHOLD);
     chrome.storage.local.remove(['topPercent', 'likeThreshold']);
   }
 });

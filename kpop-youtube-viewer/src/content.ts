@@ -133,7 +133,7 @@ async function extractAndTranslateComments(): Promise<void> {
     );
   });
   console.log(`Found ${koreanComments.length} Korean comments (excluding already translated)`);
-  let percent = 20;
+  let percent = 100;
   let likeThreshold = 1000;
   try {
     const result = await chrome.storage.local.get(['topPercent', 'likeThreshold']);
@@ -171,7 +171,7 @@ async function extractAndTranslateComments(): Promise<void> {
       translationDiv.style.background = '#e3e5e8';
       translationDiv.style.margin = '4px 0 8px 0';
       translationDiv.style.padding = '4px 12px';
-      translationDiv.style.fontSize = '0.95em';
+      translationDiv.style.fontSize = '1.05em';
       translationDiv.style.color = '#222';
       translationDiv.style.borderRadius = '4px';
       translationDiv.style.display = 'block';
