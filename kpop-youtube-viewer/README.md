@@ -69,7 +69,7 @@ Get your DeepL API key from: https://www.deepl.com/pro-api
 3. The extension will:
    - Extract all comments from the page
    - Filter comments containing Korean text
-   - Select the top 15% by like count
+   - Select the top 100% by like count
    - Translate them using your configured DeepL API key
    - Display the results
 
