@@ -1,7 +1,7 @@
 # 概要（日本語）
 
 YouTubeで視聴中の動画にある韓国語コメントを抽出し、いいね数上位のコメントをDeepLで日本語に自動翻訳して表示するChrome拡張です。
-翻訳結果は各コメントの直下に表示されます。翻訳対象の割合（デフォルト20%）やDeepL APIキーはオプションから設定できます。
+翻訳結果は各コメントの直下に表示されます。翻訳対象の割合（デフォルト100%）やDeepL APIキーはオプションから設定できます。
 
 # kpop-youtube-viewer
 
@@ -11,7 +11,7 @@ Chrome extension to view and translate K-pop related Korean comments from YouTub
 
 - Extracts comments from YouTube videos
 - Filters comments containing Korean text
-- Selects the top 20% of Korean comments by like count
+- Selects the top 100% of Korean comments by like count
 - Automatically translates selected comments to Japanese using DeepL API
 - Displays the translation directly below each comment with a 🇯🇵 mark
 - Configurable DeepL API key through the options page
@@ -19,7 +19,7 @@ Chrome extension to view and translate K-pop related Korean comments from YouTub
 ## Usage
 1. Set your DeepL API key on the extension's options page
 2. Open a YouTube video page and click the extension icon
-3. The top 20% most-liked Korean comments will be translated and shown in Japanese below each comment
+3. The top 100% most-liked Korean comments will be translated and shown in Japanese below each comment
 
 ## Development
 
@@ -84,7 +84,7 @@ kpop-youtube-viewer/
 ├── public/
 │   ├── manifest.json    # Extension manifest
 │   ├── options.html     # Options page UI
-│   └── icons/           # Extension icons (to be added)
+│   └── icons/           # Extension icons
 ├── dist/                # Built extension (generated)
 ├── package.json
 ├── tsconfig.json
@@ -94,9 +94,9 @@ kpop-youtube-viewer/
 
 ## TODO
 
-- [ ] Implement actual YouTube DOM parsing logic
-- [ ] Implement real DeepL API integration
-- [ ] Add extension icons
+- [x] Implement actual YouTube DOM parsing logic
+- [x] Implement real DeepL API integration
+- [ ] Add polished extension icons
 - [ ] Create better UI for displaying translations
 - [ ] Add error handling and retry logic
 - [ ] Add unit tests
